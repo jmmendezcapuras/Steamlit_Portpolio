@@ -40,8 +40,6 @@ h1,h2,h3{font-family:'Unbounded',sans-serif!important;font-weight:800!important;
 .portrait{position:relative;border-radius:50% 50% 24px 24px / 38% 38% 24px 24px;overflow:hidden;border:3px solid #9D5CFF;box-shadow:0 0 0 8px #9D5CFF22,0 0 60px #9D5CFF66}
 .portrait img{width:100%;display:block}
 .portrait .cap{position:absolute;left:50%;transform:translateX(-50%);bottom:12px;background:#0E0818cc;padding:4px 12px;border-radius:999px;font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.1em;white-space:nowrap}
-.badge{position:absolute;top:-10px;left:-10px;z-index:2;background:#1A1030;border:2px solid #FF5C8A;border-radius:18px;padding:6px 12px;font-size:1.6rem;box-shadow:0 4px 18px #0008;animation:float 3s ease-in-out infinite}
-@keyframes float{50%{transform:translateY(-6px)}}
 .card{border:1px solid #3a2766;background:linear-gradient(160deg,#1A1030,#120A22);border-radius:20px;padding:18px 20px}
 .card .k{font-family:'JetBrains Mono',monospace;letter-spacing:.1em;font-size:.65rem;color:#9a8bb8;text-transform:uppercase}
 .card .v{font-family:'Unbounded';font-weight:800;font-size:1.9rem;line-height:1.3;color:#C79BFF}
@@ -56,10 +54,16 @@ div[data-testid="stVerticalBlockBorderWrapper"]{border-radius:20px}
 .stButton>button[kind="primary"],.stFormSubmitButton>button[kind="primary"]{background:#9D5CFF;border-color:#9D5CFF;color:#fff}
 .stButton>button,.stDownloadButton>button,.stLinkButton>a{background:#1A1030;color:#EFE8FF;border:1px solid #3a2766}
 [data-testid="stHeader"]{background:transparent}
+[data-testid="stButtonGroup"] button{background:#1A1030!important;color:#EFE8FF!important;border:1px solid #3a2766!important}
+[data-testid="stButtonGroup"] button[data-testid$="Active"]{background:#9D5CFF!important;color:#fff!important;border-color:#9D5CFF!important}
+[data-testid="stTable"] table,[data-testid="stTable"] th,[data-testid="stTable"] td{background:#1A1030!important;color:#EFE8FF!important;border-color:#3a2766!important}
+[data-testid="stExpander"] details,[data-testid="stPopover"]>div>button{background:#1A1030!important;color:#EFE8FF!important}
 </style>
 """
 CALM = "<style>*{animation:none!important;transition:none!important}</style>"
 st.markdown(CSS, unsafe_allow_html=True)
+if getattr(getattr(st.context, "theme", None), "type", None) == "light":
+    st.markdown("<style>[data-testid='stDataFrame']{filter:invert(.93) hue-rotate(180deg)}</style>", unsafe_allow_html=True)
 
 PROFILE = {
     "name": "John Miklos M. Capuras",
@@ -214,8 +218,8 @@ if nav == "Prologue":
     st.markdown("<div class='mono'>👻 Autobiography &amp; Portfolio</div>", unsafe_allow_html=True)
     R, L = st.columns([1, 1.7], gap="large")
     with R:
-        st.markdown(f"<div style='position:relative'><div class='badge'>👻</div><div class='portrait'><img src='data:image/jpeg;base64,{img_b64(photo)}'>"
-                    f"<div class='cap'>{PROFILE['name']}</div></div></div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='portrait'><img src='data:image/jpeg;base64,{img_b64(photo)}'>"
+                    f"<div class='cap'>{PROFILE['name']}</div></div>", unsafe_allow_html=True)
     with L:
         st.markdown("<div class='hero-name'>John Miklos<br>Capuras</div>", unsafe_allow_html=True)
         st.markdown("<div class='typed'>I build <span>full-stack apps.</span></div>", unsafe_allow_html=True)
@@ -243,9 +247,8 @@ if nav == "Prologue":
         picked = st.pills("Interests", INTERESTS, selection_mode="multi", default=INTERESTS[:3], key="interest_pills")
     with b:
         st.subheader("Fast facts")
-        st.dataframe(pd.DataFrame({"": ["Name", "Program", "Year", "Section", "Focus"],
-                                   " ": [PROFILE["name"], PROFILE["program"], PROFILE["year"], PROFILE["section"], "Full-stack"]}),
-                     hide_index=True, width="stretch")
+        st.table(pd.DataFrame({"Details": [PROFILE["name"], PROFILE["program"], PROFILE["year"], PROFILE["section"], "Full-stack"]},
+                              index=["Name", "Program", "Year", "Section", "Focus"]))
 
 elif nav == "1 · Story":
     st.markdown("<div class='mono'>👻 Round 1</div>", unsafe_allow_html=True)
